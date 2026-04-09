@@ -80,7 +80,7 @@ class DMARCMonitor:
             # if self.debug():
             #     return False
 
-            if self.checker():
+            if not self.checker():
                 return False
 
             return True
