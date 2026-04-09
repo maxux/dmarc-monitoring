@@ -1,5 +1,6 @@
 __pycache__
 
+config.py
 token.json
 tools/credentials.json
 
