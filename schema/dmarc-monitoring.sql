@@ -83,7 +83,8 @@ ALTER TABLE `dmarc_reports_records`
   ADD KEY `ereason` (`ereason`),
   ADD KEY `dkimresult` (`dkimresult`),
   ADD KEY `spfresult` (`spfresult`),
-  ADD KEY `rid` (`rid`);
+  ADD KEY `rid` (`rid`),
+  ADD KEY `eamount` (`eamount`);
 
 ALTER TABLE `dmarc_resources`
   ADD PRIMARY KEY (`filename`);
@@ -128,13 +129,13 @@ ALTER TABLE `dmarc_reports_records`
 --
 
 INSERT INTO `dmarc_types` (`id`, `rkey`, `name`, `severity`) VALUES
-(1, 'none', 'none', 'info'),
-(2, 'reject', 'reject', 'info'),
-(3, 'quarantine', 'quarantine', 'info'),
-(4, 'pass', 'pass', 'info'),
-(5, 'fail', 'fail', 'info'),
-(6, 'relaxed', 'relaxed', 'info'),
-(7, 'strict', 'strict', 'info'),
+(1, 'none', 'Nothing', 'success'),
+(2, 'reject', 'Reject', 'orange'),
+(3, 'quarantine', 'Quarantine', 'pink'),
+(4, 'pass', 'PASS', 'success'),
+(5, 'fail', 'FAIL', 'danger'),
+(6, 'relaxed', 'Relaxed', 'teal'),
+(7, 'strict', 'Strict', 'orange'),
 (8, 'forwarded', 'forwarded', 'info'),
 (9, 'local_policy', 'local_policy', 'info'),
 (10, 'mailing_list', 'mailing_list', 'info'),
@@ -145,4 +146,4 @@ INSERT INTO `dmarc_types` (`id`, `rkey`, `name`, `severity`) VALUES
 (15, 'neutral', 'neutral', 'info'),
 (16, 'temperror', 'temperror', 'info'),
 (17, 'permerror', 'permerror', 'info'),
-(18, 'softfail', 'softfail', 'info');
+(18, 'softfail', 'SOFTFAIL', 'purple');
