@@ -77,8 +77,8 @@ class DMARCMonitor:
 
     def recurrent(self):
         try:
-            if self.debug():
-                return False
+            # if self.debug():
+            #     return False
 
             if self.checker():
                 return False
