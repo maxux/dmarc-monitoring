@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>DMARC Reports Viewer</title>
+  <link rel="stylesheet" href="/static/bootstrap-custom.css">
+  <link rel="stylesheet" href="/static/dmarc-webui.css">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#000000">
+  <meta name="description" content="DMARC Reports Viewer">
+  <meta name="author" content="Maxux, Soundware Production">
+</head>
+<body>
+  <main class="container">
+    <h1 class="border-3 border-bottom pt-4 mb-5">DMARC Reports Viewer</h1>
+
+    {% macro tba(label, id) %}
+      {% if id is none %}
+      <span class="badge badge-status-rev-value text-bg-warning">
+        (undefined)
+      </span><span class="badge badge-status-rev-label text-bg-dark">
+        {{ label }}
+      </span>
+      {% else %}
+      <div>
+        <span class="badge badge-status-rev-value text-bg-{{ types[id].severity }}">
+        {{ types[id].name }}
+        </span><span class="badge badge-status-rev-label text-bg-dark">
+        {{ label }}
+        </span>
+      </div>
+      {% endif %}
+    {% endmacro %}
+
+    {% macro tbx(label, severity, value) %}
+      <div>
+        <span class="badge badge-status-label text-bg-dark">
+        {{ label }}
+        </span><span class="badge badge-status-value text-bg-{{ severity }}">
+        {{ value }}
+        </span>
+      </div>
+    {% endmacro %}
+
+    {% macro tbls(lseverity, label, id) %}
+      <div>
+        <span class="badge badge-status-label text-bg-{{ lseverity }}">
+        {{ label }}
+        </span><span class="badge badge-status-value text-bg-{{ types[id].severity }}">
+        {{ types[id].name }}
+        </span>
+      </div>
+    {% endmacro %}
+
+    {% macro tbals(lseverity, label, id) %}
+      <div>
+        <span class="badge badge-status-label text-bg-{{ types[id].severity }}">
+        {{ types[id].name }}
+        </span><span class="badge badge-status-value text-bg-{{ lseverity }}">
+        {{ label }}
+        </span>
+      </div>
+    {% endmacro %}
+
+    {% macro tbs(id) %}
+      {%- if id in types %}
+      <span class="badge text-bg-{{ types[id].severity }}">
+        {{ types[id].name }}
+      </span>
+      {%- endif %}
+    {% endmacro %}
+
+    {%- macro tsev(id) %}
+      {%- if id in types %}
+      {{- types[id].severity -}}
+      {%- endif %}
+    {%- endmacro %}
+
+    {%- macro tname(id) %}
+      {%- if id in types %}
+      {{- types[id].name -}}
+      {%- endif %}
+    {%- endmacro %}
+
+
+    {% for report in reports %}
+    <div class="row mb-5">
+      <div class="d-flex justify-content-between align-items-center border-bottom mb-3">
+        <h2 class="m-0">
+          {{ report.orgname }}
+        </h2>
+        <small>
+          <code>{{ report.filename }}</code>
+        </small>
+      </div>
+
+      <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 row-cols-xxl-4 lh-base text-center mb-4">
+        <div class="col">
+          {{ tbx("Domain", "blue", report.domain) }}
+          {{ tbx("Report for", "secondary", report.rdate | datetimeformat('EEE dd MMM YYYY')) }}
+          {#
+          {{ tbx("Parsed on", "secondary", report.parsed | datetimeformat('dd MMM YYYY, HH:mm')) }}
+          #}
+        </div>
+        <div class="col">
+          {{ tbx("Received on", "secondary", report.received | datetimeformat('dd MMM YYYY, HH:mm')) }}
+          {{ tbx("Received at", "secondary", report.receiver) }}
+        </div>
+        <div class="col">
+          {{ tba("DKIM Alignment", report.adkim) }}
+          {{ tba("SPF Alignment", report.aspf) }}
+        </div>
+        <div class="col">
+          {{ tba("Disposition", report.policy) }}
+          {{ tba("Sub-disposition", report.subpolicy) }}
+        </div>
+      </div>
+
+      <div class="container-table-data">
+        <div class="row fw-bold">
+          <div class="col-12 col-sm-3">Count / Source</div>
+          <div class="col-12 col-sm-2">Dispos.</div>
+          <div class="col-12 col-sm-4">DKIM</div>
+          <div class="col-12 col-sm-3">SPF</div>
+        </div>
+        {% for record in report.records %}
+        <div class="row">
+          <div class="font-monospace col-12 col-lg-3 d-flex align-items-center flex-wrap">
+            <div class="ps-1 pe-3 mails-counter">
+              <span class="badge text-bg-primary rounded-pill">{{ record.eamount }}</span>
+            </div>
+            <div>
+            {{ record.source }}
+            <br>
+            <code class="fw-bold">{{ record.mailfrom }}</code>
+            {% if record.mailto is not none %}
+              <code>&gt; {{ record.mailto }}</code>
+            {% endif %}
+            </div>
+          </div>
+          <div class="col-12 col-lg-2 text-bg-{{ tsev(record.edisp) }}-subtle d-flex align-items-center">
+            {{ tbs(record.edisp) }}
+          </div>
+          <div class="col-12 col-lg-4 text-bg-{{ tsev(record.edkim) }}-subtle d-flex align-items-center flex-wrap">
+            {% if record.dkimdom != report.domain %}
+              {{ tbals("warning", record.dkimdom, record.dkimresult) }}
+            {% else %}
+              {{ tba(record.dkimdom, record.dkimresult) }}
+            {% endif %}
+
+            {% if record.edkim != 4 %}
+              {{ tba("Evaluation", record.edkim) }}
+            {% endif %}
+
+          </div>
+          <div class="col-12 col-lg-3 text-bg-{{ tsev(record.spfresult) }}-subtle d-flex align-items-center flex-wrap">
+            <div class="w-100">
+            {{ tba(record.spfdom, record.spfresult) }}
+            </div>
+
+            {% if record.espf != 4 %}
+            {{ tba("Evaluation", record.espf) }}
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+    </div>
+    {% endfor %}
+  </main>
+
+  <footer class="py-5 text-center">
+    <small class="d-block text-muted">&copy; {{ now.year }} - DMARC Viewer by Maxux, Soundware Production</small>
+  </footer>
+
+  <script src="/static/bootstrap-5.3.3.bundle.min.js"></script>
+</body>
+</html>
