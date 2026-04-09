@@ -73,13 +73,14 @@ class DMARCReporter:
 
             print(f"[=] dmarc: {disp} / DKIM: {dkim} / SPF: {spf} {rx}")
 
-            dk = auth["dkim"][0]
-            sp = auth["spf"][0]
+            if len(auth["dkim"]) > 0:
+                dk = auth["dkim"][0]
+                dkr = self.result(dk["result"])
+                print(f"[=] dkim : {dkr} / {dk['domain']}")
 
-            dkr = self.result(dk["result"])
+            sp = auth["spf"][0]
             spr = self.result(sp["result"])
 
-            print(f"[=] dkim : {dkr} / {dk['domain']}")
             print(f"[=] spf  : {spr} / {sp['domain']}")
             print("[=]")
 
