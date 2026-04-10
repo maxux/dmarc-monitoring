@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block title %}DMARC Reports Aggregation{% endblock %}
+{% block header %}DMARC Reports Aggregation{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row mb-5">
+      <div class="container-table-data">
+        <div class="row fw-bold">
+          <div class="col-12 col-sm-3">Count / Source</div>
+          <div class="col-12 col-sm-2">Disposition</div>
+          <div class="col-12 col-sm-4">DKIM</div>
+          <div class="col-12 col-sm-3">SPF</div>
+        </div>
+        {% for record in aggregation %}
+        <div class="row">
+          <div class="font-monospace col-12 col-lg-3 d-flex align-items-center flex-wrap">
+            <div class="ps-1 pe-3 mails-counter">
+              <span class="badge text-bg-blue-{{ dmarc.xweight(record.eamount, 300) }} rounded-pill">{{ record.eamount }}</span>
+            </div>
+            <div>
+              {% if record.eamount != 1 %}
+              Aggregated Servers
+              {% else %}
+              {{ record.source }}
+              {% endif %}
+            <br>
+            <code class="fw-bold">{{ record.mailfrom }}</code>
+            {# if record.mailto is not none %}
+              <code>&gt; {{ record.mailto }}</code>
+            {% endif #}
+            </div>
+          </div>
+          <div class="col-12 col-lg-2 text-bg-{{ dmarc.tsev(record.edisp) }}-subtle d-flex flex-column">
+            {{ dmarc.tbarev("DISP", record.edisp) }}
+            {{ dmarc.tbarev("DKIM", record.edkim) }}
+            {{ dmarc.tbarev("SPF", record.espf) }}
+          </div>
+          <div class="col-12 col-lg-4 text-bg-{{ dmarc.tsev(record.edkim) }}-subtle d-flex align-items-center flex-wrap">
+            {% if record.dkimdom != record.mailfrom %}
+              {{ dmarc.tbals("warning", record.dkimdom, record.dkimresult) }}
+            {% else %}
+              {{ dmarc.tba(record.dkimdom, record.dkimresult) }}
+            {% endif %}
+
+          </div>
+          <div class="col-12 col-lg-3 text-bg-{{ dmarc.tsev(record.spfresult) }}-subtle d-flex align-items-center flex-wrap">
+            <div class="w-100">
+            {{ dmarc.tba(record.spfdom, record.spfresult) }}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+{% endblock %}

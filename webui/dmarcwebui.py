@@ -79,7 +79,7 @@ class DMARCWebUI:
         cursor = g.db.cursor()
         cursor.execute("""
             SELECT id, rid, source,
-                   eamount, eamount, edisp, edkim, espf, ereason, ecomment,
+                   eamount, edisp, edkim, espf, ereason, ecomment,
                    mailfrom, mailto,
                    dkimdom, dkimresult, spfdom, spfresult
             FROM dmarc_reports_records
@@ -90,6 +90,18 @@ class DMARCWebUI:
             reportsmap[record["rid"]]["records"].append(record)
 
         return reports
+
+    def aggregation(self):
+        cursor = g.db.cursor()
+        cursor.execute("""
+            SELECT SUM(eamount) eamount, source, edisp, edkim, espf,
+                   mailfrom, dkimdom, dkimresult, spfdom, spfresult
+            FROM dmarc_reports_records
+            GROUP BY edisp, edkim, espf, mailfrom, dkimdom, dkimresult, spfdom, spfresult
+            ORDER BY eamount DESC
+        """)
+
+        return cursor.fetchall()
 
     def routes(self):
         @self.app.before_request
@@ -124,6 +136,15 @@ class DMARCWebUI:
         def dmarc_reports():
             return jsonify({})
         """
+
+        @self.app.get('/aggregation')
+        def dmarc_aggregation():
+            contents = {
+                "aggregation": self.aggregation(),
+                "types": g.types,
+            }
+            return render_template("aggregation.html", **contents)
+
 
         @self.app.get('/')
         def dmarc_index():

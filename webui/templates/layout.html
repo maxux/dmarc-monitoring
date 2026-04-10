@@ -1,0 +1,37 @@
+{% import "macros.html" as dmarc with context %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>{% block title %}{% endblock %}</title>
+  <link rel="stylesheet" href="/static/bootstrap-custom.css">
+  <link rel="stylesheet" href="/static/dmarc-webui.css">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#000000">
+  <meta name="description" content="DMARC Reports Viewer">
+  <meta name="author" content="Maxux, Soundware Production">
+</head>
+<body>
+  <main>
+    <div class="container">
+      <h1 class="border-3 border-bottom pt-4 mb-5">{% block header %}{% endblock %}</h1>
+    </div>
+
+    <div class="text-center mb-5">
+      <a href="/" class="btn btn-primary">Complete reports</a>
+      <a href="/aggregation" class="btn btn-primary">Summary aggregation</a>
+    </div>
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="py-5 text-center">
+    <small class="d-block text-muted">&copy; {{ now.year }} - DMARC Viewer by Maxux, Soundware Production</small>
+  </footer>
+
+  <script src="/static/bootstrap-5.3.3.bundle.min.js"></script>
+</body>
+</html>

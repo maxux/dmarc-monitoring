@@ -1,0 +1,90 @@
+{% macro tba(label, id) %}
+  {% if id is none %}
+  <span class="badge badge-status-rev-value text-bg-warning">
+    (undefined)
+  </span><span class="badge badge-status-rev-label text-bg-dark">
+    {{ label }}
+  </span>
+  {% else %}
+  <div>
+    <span class="badge badge-status-rev-value text-bg-{{ types[id].severity }}">
+    {{ types[id].name }}
+    </span><span class="badge badge-status-rev-label text-bg-dark">
+    {{ label }}
+    </span>
+  </div>
+  {% endif %}
+{% endmacro %}
+
+{% macro tbarev(label, id) %}
+  {% if id is none %}
+  <span class="badge badge-status-rev-value text-bg-warning">
+    (undefined)
+  </span><span class="badge badge-status-rev-label text-bg-dark">
+    {{ label }}
+  </span>
+  {% else %}
+  <div>
+    <span class="badge badge-status-label text-bg-dark">
+    {{ label }}
+    </span><span class="badge badge-status-value text-bg-{{ types[id].severity }}">
+    {{ types[id].name }}
+    </span>
+  </div>
+  {% endif %}
+{% endmacro %}
+
+{% macro tbx(label, severity, value) %}
+  <div>
+    <span class="badge badge-status-label text-bg-dark">
+    {{ label }}
+    </span><span class="badge badge-status-value text-bg-{{ severity }}">
+    {{ value }}
+    </span>
+  </div>
+{% endmacro %}
+
+{% macro tbls(lseverity, label, id) %}
+  <div>
+    <span class="badge badge-status-label text-bg-{{ lseverity }}">
+    {{ label }}
+    </span><span class="badge badge-status-value text-bg-{{ types[id].severity }}">
+    {{ types[id].name }}
+    </span>
+  </div>
+{% endmacro %}
+
+{% macro tbals(lseverity, label, id) %}
+  <div>
+    <span class="badge badge-status-label text-bg-{{ types[id].severity }}">
+    {{ types[id].name }}
+    </span><span class="badge badge-status-value text-bg-{{ lseverity }}">
+    {{ label }}
+    </span>
+  </div>
+{% endmacro %}
+
+{% macro tbs(id) %}
+  {%- if id in types %}
+  <span class="badge text-bg-{{ types[id].severity }}">
+    {{ types[id].name }}
+  </span>
+  {%- endif %}
+{% endmacro %}
+
+{%- macro tsev(id) %}
+  {%- if id in types %}
+  {{- types[id].severity -}}
+  {%- endif %}
+{%- endmacro %}
+
+{%- macro tname(id) %}
+  {%- if id in types %}
+  {{- types[id].name -}}
+  {%- endif %}
+{%- endmacro %}
+
+{%- macro xweight(value, scale) %}
+  {%- set wx = (value / scale) | round(1) %}
+  {{- ((wx * 1000) + 100) | int -}}
+{%- endmacro %}

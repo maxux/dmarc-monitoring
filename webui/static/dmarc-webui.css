@@ -34,14 +34,33 @@
     background-color: rgba(var(--bs-tertiary-bg-rgb), 1) !important;
 }
 
+.container-table-data .row:first-child {
+    border-bottom: solid 1px var(--bs-gray-500);
+    background-color: var(--bs-bg-body) !important;
+}
+
 .container-table-data .row > div {
     padding: 0.4rem 0.6rem 0.4rem 0.6rem;
 }
 
+.marker-date {
+    writing-mode: sideways-lr;
+    text-orientation: mixed;
+    position: absolute;
+    left: -50px;
+    top: 0;
+    width: 50px;
+    height: 100%;
+    text-align: right;
+    font-size: 1.25rem;
+}
+
+/*
 .container-table-data .row:last-child {
     border-bottom-left-radius: 0.375rem;
     border-bottom-right-radius: 0.375rem;
 }
+*/
 
 .mails-counter {
     min-width: 3.5rem;
