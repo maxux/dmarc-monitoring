@@ -12,7 +12,7 @@ class DMARCWebUI:
         self.app = Flask(__name__, static_url_path='/static')
         self.app.url_map.strict_slashes = False
 
-        self.app.config["DEBUG"] = True
+        self.app.config["DEBUG"] = self.config.get("web-debug", True)
 
         self.babel = Babel(self.app)
         self.babel.init_app(self.app, locale_selector=self.translation_get_locale)
@@ -131,13 +131,7 @@ class DMARCWebUI:
         def inject_now():
             return {'now': datetime.utcnow()}
 
-        """
-        @self.app.get('/reports')
-        def dmarc_reports():
-            return jsonify({})
-        """
-
-        @self.app.get('/aggregation')
+        @self.app.get("/aggregation")
         def dmarc_aggregation():
             contents = {
                 "aggregation": self.aggregation(),
@@ -146,7 +140,7 @@ class DMARCWebUI:
             return render_template("aggregation.html", **contents)
 
 
-        @self.app.get('/')
+        @self.app.get("/")
         def dmarc_index():
             contents = {
                 "reports": self.reports(),
