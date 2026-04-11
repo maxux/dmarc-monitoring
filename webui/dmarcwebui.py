@@ -152,7 +152,7 @@ class DMARCWebUI:
                 "reports": self.reports(),
                 "types": g.types,
             }
-            return render_template("index.html", **contents)
+            return render_template("reports.html", **contents)
 
 if __name__ == "dmarcwebui":
     print("[+] wsgi: initializing dmarc webui application")
