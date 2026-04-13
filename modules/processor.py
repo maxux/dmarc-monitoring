@@ -76,30 +76,24 @@ class DMARCMonitor:
         return True
 
     def recurrent(self):
-        try:
-            # if self.debug():
-            #     return False
+        # if self.debug():
+        #     return False
 
-            if not self.checker():
-                return False
-
-            return True
-
-        except KeyboardInterrupt:
-            print("")
-            logger.warning("Interruption from keyboard, gracefully stopping")
+        if not self.checker():
             return False
+
+        return True
 
     def monitor(self):
         while True:
-            logger.process("[+] monitor: checking for new reports")
-
-            if not self.recurrent():
-                return False
-
-            logger.process("[+] monitor: waiting for next cycle")
-
             try:
+                logger.process("[+] monitor: checking for new reports")
+
+                if not self.recurrent():
+                    return False
+
+                logger.process("[+] monitor: waiting for next cycle")
+
                 time.sleep(1200)
 
             except KeyboardInterrupt:

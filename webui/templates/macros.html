@@ -56,11 +56,15 @@
 
 {% macro tbals(lseverity, label, id) %}
   <div>
+{% if id is none %}
+    <span class="badge text-bg-warning">(undefined)</span>
+{% else %}
     <span class="badge badge-status-label text-bg-{{ types[id].severity }}">
     {{ types[id].name }}
     </span><span class="badge badge-status-value text-bg-{{ lseverity }}">
     {{ label }}
     </span>
+{% endif %}
   </div>
 {% endmacro %}
 
@@ -86,5 +90,6 @@
 
 {%- macro xweight(value, scale) %}
   {%- set wx = (value / scale) | round(1) %}
-  {{- ((wx * 1000) + 100) | int -}}
+  {%- set wxp = ((wx * 1000) + 100) | int %}
+  {{- wxp if wxp <= 900 else 900 -}}
 {%- endmacro %}

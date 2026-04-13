@@ -135,8 +135,11 @@ class DMARCPersistance:
 
     def record(self, id, record):
         px = record["row"]["policy"]
-        adk = record["authresults"]["dkim"][0]
+        adk = {"domain": None, "result": None}
         asp = record["authresults"]["spf"][0]
+
+        if len(record["authresults"]["dkim"]) > 0:
+            adk = record["authresults"]["dkim"][0]
 
         data = {
             "rid": id,

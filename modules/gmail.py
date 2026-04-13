@@ -1,6 +1,7 @@
 import os
 import base64
 import google.auth
+import re
 
 from datetime import datetime
 from googleapiclient.discovery import build
@@ -54,17 +55,18 @@ class DMARCBackendGMail:
 
         return None
 
-    def findattachement(self, message, domain):
-        match = f"!{self.domain}!"
+    def findattachement(self, message):
+                  # host    ! domain   ! from   ! to     .ext"
+        match = r"([a-z\.]+)!([a-z\.]+)!([0-9]+)!([0-9]+).(.+)"
         payload = message["payload"]
 
         if "filename" in payload:
-            if match in payload["filename"]:
+            if re.match(match, payload["filename"]):
                 return payload
 
         if "parts" in payload:
             for part in payload["parts"]:
-                if match in part["filename"]:
+                if re.match(match, part["filename"]):
                     return part
 
         return None
@@ -77,7 +79,7 @@ class DMARCBackendGMail:
         if len(messages["messages"]) > 1:
             raise NotImplemented("Multiple messages in thread")
 
-        return (self.findattachement(messages["messages"][0], self.domain) is not None)
+        return (self.findattachement(messages["messages"][0]) is not None)
 
     def saveattachement(self, msgid, attachid, filename):
         service = build('gmail', 'v1', credentials=self.creds)
@@ -106,7 +108,7 @@ class DMARCBackendGMail:
         if len(messages["messages"]) > 1:
             raise NotImplemented("Multiple messages in thread")
 
-        report = self.findattachement(messages["messages"][0], self.domain)
+        report = self.findattachement(messages["messages"][0])
         if report is None:
             return None
 
